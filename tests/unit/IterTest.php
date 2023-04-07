@@ -63,6 +63,28 @@ final class IterTest extends TestCase{
         $this->assertSame($expected, $actual);
     }
 
+    public function testSkip() : void{
+        $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $expected = [5 => 6, 6 => 7,7 => 8, 8 => 9, 9 => 10];
+
+        $actual = Iter::create($case)
+            ->skip(5)
+            ->native();
+        $actual = iterator_to_array($actual);
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testSkipWhile() : void{
+        $case = [1, 2, 3, 4, 5, -1, 7, 8, 9, 10];
+        $expected = [5 => -1, 6 => 7,7 => 8, 8 => 9, 9 => 10];
+
+        $actual = Iter::create($case)
+            ->skipWhile(fn(int $v) : bool => $v < 0)
+            ->native();
+        $actual = iterator_to_array($actual);
+        $this->assertSame($expected, $actual);
+    }
+
     public function testAll() : void{
         $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 

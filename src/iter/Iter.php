@@ -95,6 +95,58 @@ final class Iter{
             yield $k => $callback($v);
         }
     }
+
+    /**
+     * Skip elements until `$n` elements skipped or the end is reached.
+     * 
+     * @return self<TKey, TValue>
+     */
+    public function skip(int $n) : self{
+        return new self(self::internalSkip($this->elements, $n));
+    }
+
+    /**
+     * @param iterable<TKey, TValue> $i
+     * @return iterable<TKey, TValue>
+     */
+    private static function internalSkip(iterable $i, int $n) : iterable{
+        $j = 0;
+        foreach($i as $k => $v){
+            if($j < $n){
+                $j++;
+                continue;
+            }
+            yield $k => $v;
+        }
+    }
+
+    /**
+     * Skip elements until `$n` is false or the end is reached.
+     * 
+     * @phpstan-param Closure(TValue) : bool $callback
+     * @return self<TKey, TValue>
+     */
+    public function skipWhile(Closure $callback) : self{
+        return new self(self::internalSkipWhile($this->elements, $callback));
+    }
+
+    /**
+     * @param iterable<TKey, TValue> $i
+     * @return iterable<TKey, TValue>
+     */
+    private static function internalSkipWhile(iterable $i, Closure $callback) : iterable{
+        $flagForAlreadyFalse = false;
+        foreach($i as $k => $v){
+            if(!$flagForAlreadyFalse && $callback($v)){
+                $flagForAlreadyFalse = true;
+            }
+            if($flagForAlreadyFalse){
+                yield $k => $v;
+            }
+        }
+    }
+
+
     /**
      * Test if every elements in the itarator matches a condition given by callback.
      *
