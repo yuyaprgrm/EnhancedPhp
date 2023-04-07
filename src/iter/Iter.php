@@ -19,38 +19,35 @@ use Iterator;
 use Traversable;
 use yuyaprgrm\enhancedphp\iter\internal\Filter;
 use yuyaprgrm\enhancedphp\iter\internal\Map;
-use yuyaprgrm\enhancedphp\iter\internal\ValueFilteredException;
 
 /**
  * Immutable iterator interface
  *
  * This interface is largely influenced by Rust iter trait.
- *
+ * 
  * @template TKey
  * @template TValue
  */
 final class Iter{
 
     /**
-     * @param iterable<TKey, mixed> $elements
-     * @param list<Filter|Map>      $processes
+     * @phpstan-param iterable<TKey, TValue> $elements
      */
     private function __construct(
-        private iterable $elements,
-        private array $processes
+        private iterable $elements
     ){
     }
 
     /**
      * Create new Iter
      *
-     * @template Key
-     * @template Value
-     * @param iterable<Key, Value> $elements
-     * @return self<Key, Value>
+     * @template UKey
+     * @template UValue
+     * @param iterable<UKey, UValue> $elements
+     * @phpstan-return self<UKey, UValue>
      */
     public static function create(iterable $elements) : self{
-        return new self($elements, []);
+        return new self($elements);
     }
 
     /**
@@ -60,20 +57,44 @@ final class Iter{
      * @return self<TKey, TValue>
      */
     public function filter(Closure $callback) : self{
-        return new self($this->elements, [...$this->processes, new Filter($callback)]);
+        return new self(self::internalFilter($this->elements, $callback));
     }
 
     /**
-     * Map elements in the iterator to new elements with callback.
+     * @param iterable<TKey, TValue> $i
+     * @phpstan-param Closure(TValue) : bool $callback
+     * @return iterable<TKey, TValue>
+     */
+    private static function internalFilter(iterable $i, Closure $callback) : iterable{
+        foreach($i as $k => $v){
+            if($callback($v)){
+                yield $k => $v;
+            }
+        }
+    }
+
+    /**
+     * Map elements in the iterable to new elements with callback.
      *
      * @template UValue
      * @phpstan-param Closure(TValue) : UValue $callback
      * @return self<TKey, UValue>
      */
     public function map(Closure $callback) : self{
-        return new self($this->elements, [...$this->processes, new Map($callback)]);
+        return new self(self::internalMap($this->elements, $callback));
     }
 
+    /**
+     * @template UValue
+     * @param iterable<TKey, TValue> $i
+     * @phpstan-param Closure(TValue) : UValue $callback
+     * @return iterable<TKey, UValue>
+     */
+    private static function internalMap(iterable $i, Closure $callback) : iterable{
+        foreach($i as $k => $v){
+            yield $k => $callback($v);
+        }
+    }
     /**
      * Test if every elements in the itarator matches a condition given by callback.
      *
@@ -81,13 +102,6 @@ final class Iter{
      */
     public function all(Closure $callback) : bool{
         foreach($this->elements as $v){
-            try{
-                foreach($this->processes as $proc){
-                    $v = $proc->execute($v);
-                }
-            }catch(ValueFilteredException){
-                continue;
-            }
             if(!$callback($v)){
                 return false;
             }
@@ -103,13 +117,6 @@ final class Iter{
      */
     public function any(Closure $callback) : bool{
         foreach($this->elements as $v){
-            try{
-                foreach($this->processes as $proc){
-                    $v = $proc->execute($v);
-                }
-            }catch(ValueFilteredException){
-                continue;
-            }
             if($callback($v)){
                 return true;
             }
@@ -119,27 +126,14 @@ final class Iter{
     }
 
     /**
-     * Transform an iterator into native iterator.
+     * Transform an iterable into native iterator.
      *
-     * @return Traversable<TKey, TValue>
+     * @return Traversable<TKey, TValue>)
      */
     public function native() : Traversable{
         foreach($this->elements as $k => $v){
-            try{
-                foreach($this->processes as $proc){
-                    $v = $proc->execute($v);
-                }
-            }catch(ValueFilteredException){
-                continue;
-            }
-
-            /**
-             * HACK: I have no idea to solve type assertion properly.
-             * So far, I have to set value type directly.
-             *
-             * @var TValue $v
-             * */
             yield $k => $v;
         }
     }
+
 }
