@@ -122,7 +122,12 @@ final class Iter{
                 continue;
             }
 
-            /** @var TValue $v */
+            /**
+             * HACK: I have no idea to solve type assertion properly.
+             * So far, I have to set value type directly.
+             * 
+             * @var TValue $v
+             * */
             yield $k => $v;
         }
     }
