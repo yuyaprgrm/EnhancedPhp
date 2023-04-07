@@ -1,0 +1,22 @@
+{
+    "name": "yuyaprgrm/enhanced-php",
+    "type": "library",
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "yuyaprgrm",
+            "email": "yuyaprgrm@outlook.jp"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "yuyaprgrm\\enhancedphp\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {}
+}
