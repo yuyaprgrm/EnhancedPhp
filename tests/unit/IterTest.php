@@ -32,56 +32,61 @@ final class IterTest extends TestCase{
 
     public function testFilter() : void{
         $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        $expected = [0 => 1, 2 => 3, 4 => 5, 6 => 7, 8 => 9];
+        $expected = [1, 3, 5, 7, 9];
 
         $actual = Iter::create($case)
             ->filter(fn(int $v) : bool => ($v % 2 == 1))
             ->native();
-        $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
     }
 
     public function testComplex() : void{
         $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        $expected = [0 => 1, 2 => 9, 4 => 25, 6 => 49, 8 => 81];
+        $expected = [1, 9, 25, 49, 81];
 
         $actual = Iter::create($case)
             ->filter(fn(int $v) : bool => ($v % 2 == 1))
             ->map(fn(int $v) : int => $v ** 2)
             ->native();
-        $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
 
         $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        $expected = [0 => 2, 2 => 4, 4 => 6, 6 => 8, 8 => 10];
+        $expected = [2, 4, 6, 8, 10];
 
         $actual = Iter::create($case)
             ->filter(fn(int $v) : bool => ($v % 2 == 1))
             ->map(fn(int $v) : int => $v + 1)
             ->native();
-        $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
     }
 
     public function testSkip() : void{
         $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        $expected = [5 => 6, 6 => 7,7 => 8, 8 => 9, 9 => 10];
+        $expected = [6, 7, 8, 9, 10];
 
         $actual = Iter::create($case)
             ->skip(5)
             ->native();
-        $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
     }
 
     public function testSkipWhile() : void{
         $case = [1, 2, 3, 4, 5, -1, 7, 8, 9, 10];
-        $expected = [5 => -1, 6 => 7,7 => 8, 8 => 9, 9 => 10];
+        $expected = [-1, 7, 8, 9, 10];
 
         $actual = Iter::create($case)
-            ->skipWhile(fn(int $v) : bool => $v < 0)
+            ->skipWhile(fn(int $v) : bool => $v > 0)
             ->native();
-        $actual = iterator_to_array($actual);
+        $this->assertSame($expected, $actual);
+    }
+
+    public function restRev() : void{
+        $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        $actual = Iter::create($case)
+            ->rev()
+            ->native();
         $this->assertSame($expected, $actual);
     }
 
