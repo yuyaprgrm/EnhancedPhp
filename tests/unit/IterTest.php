@@ -69,4 +69,11 @@ final class IterTest extends TestCase{
         $this->assertTrue(Iter::create($case)->all(fn(int $v) => $v > 0));
         $this->assertFalse(Iter::create($case)->all(fn(int $v) => $v > 1));
     }
+
+    public function testAny() : void{
+        $case = [1, 3, 5, 7, 9, 11, 13, 14, 15, 17];
+
+        $this->assertTrue(Iter::create($case)->any(fn(int $v) => $v % 2 == 0));
+        $this->assertFalse(Iter::create($case)->any(fn(int $v) => $v % 4 == 0));
+    }
 }
