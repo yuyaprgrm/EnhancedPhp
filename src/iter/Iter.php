@@ -1,20 +1,30 @@
-<?php declare(strict_types=1);
+<?php
+
+/*
+ *
+ * EnhancedPhp by yuyaprgrm
+ *
+ * @author yuyaprgrm
+ * @link https://github.com/yuyaprgrm/EnhancedPhp
+ *
+ *
+ */
+
+declare(strict_types=1);
 
 namespace yuyaprgrm\enhancedphp\iter;
 
 use Closure;
 use Iterator;
-use IteratorAggregate;
-use Traversable;
-use yuyaprgrm\enhancedphp\iter\internal\Map;
 use yuyaprgrm\enhancedphp\iter\internal\Filter;
+use yuyaprgrm\enhancedphp\iter\internal\Map;
 use yuyaprgrm\enhancedphp\iter\internal\ValueFilteredException;
 
 /**
  * Immutable iterator interface
- * 
+ *
  * This interface is largely influenced by Rust iter trait.
- * 
+ *
  * @template TKey
  * @template TValue
  */
@@ -22,17 +32,17 @@ final class Iter{
 
     /**
      * @param iterable<TKey, mixed> $elements
-     * @param list<Filter|Map> $processes
+     * @param list<Filter|Map>      $processes
      */
     private function __construct(
         private iterable $elements,
         private array $processes
     ){
     }
-    
+
     /**
      * Create new Iter
-     * 
+     *
      * @template Key
      * @template Value
      * @param iterable<Key, Value> $elements
@@ -44,7 +54,7 @@ final class Iter{
 
     /**
      * Filter elements in the iteratir with callback.
-     * 
+     *
      * @phpstan-param Closure(TValue) : bool $callback
      * @return self<TKey, TValue>
      */
@@ -54,7 +64,7 @@ final class Iter{
 
     /**
      * Map elements in the iterator to new elements with callback.
-     * 
+     *
      * @template UValue
      * @phpstan-param Closure(TValue) : UValue $callback
      * @return self<TKey, UValue>
@@ -65,12 +75,12 @@ final class Iter{
 
     /**
      * Test if every elements in the itarator matches a condition given by callback.
-     * 
+     *
      * @phpstan-param Closure(TValue) : bool $callback
      */
     public function all(Closure $callback) : bool{
         foreach($this->elements as $v){
-            try{    
+            try{
                 foreach($this->processes as $proc){
                     $v = $proc->execute($v);
                 }
@@ -87,12 +97,12 @@ final class Iter{
 
     /**
      * Test if  elements in the itarator matches a condition given by callback.
-     * 
+     *
      * @phpstan-param Closure(TValue) : bool $callback
      */
     public function any(Closure $callback) : bool{
         foreach($this->elements as $v){
-            try{    
+            try{
                 foreach($this->processes as $proc){
                     $v = $proc->execute($v);
                 }
@@ -109,12 +119,12 @@ final class Iter{
 
     /**
      * Transform an iterator into native iterator.
-     * 
+     *
      * @return iterable<TKey, TValue>
      */
     public function native() : iterable{
         foreach($this->elements as $k => $v){
-            try{    
+            try{
                 foreach($this->processes as $proc){
                     $v = $proc->execute($v);
                 }
@@ -125,7 +135,7 @@ final class Iter{
             /**
              * HACK: I have no idea to solve type assertion properly.
              * So far, I have to set value type directly.
-             * 
+             *
              * @var TValue $v
              * */
             yield $k => $v;

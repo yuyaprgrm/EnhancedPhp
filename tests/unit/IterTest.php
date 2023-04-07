@@ -1,4 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+/*
+ *
+ * EnhancedPhp by yuyaprgrm
+ *
+ * @author yuyaprgrm
+ * @link https://github.com/yuyaprgrm/EnhancedPhp
+ *
+ *
+ */
+
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use yuyaprgrm\enhancedphp\iter\Iter;
@@ -10,7 +22,7 @@ final class IterTest extends TestCase{
 
         foreach(
             Iter::create($case)
-                ->map(fn(int $v) : int => $v**2)
+                ->map(fn(int $v) : int => $v ** 2)
                 ->native()
             as $k => $v
         ){
@@ -35,7 +47,7 @@ final class IterTest extends TestCase{
 
         $actual = Iter::create($case)
             ->filter(fn(int $v) : bool => ($v % 2 == 1))
-            ->map(fn(int $v) : int => $v**2)
+            ->map(fn(int $v) : int => $v ** 2)
             ->native();
         $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
@@ -45,7 +57,7 @@ final class IterTest extends TestCase{
 
         $actual = Iter::create($case)
             ->filter(fn(int $v) : bool => ($v % 2 == 1))
-            ->map(fn(int $v) : int => $v+1)
+            ->map(fn(int $v) : int => $v + 1)
             ->native();
         $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
