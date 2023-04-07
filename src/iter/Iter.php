@@ -16,6 +16,7 @@ namespace yuyaprgrm\enhancedphp\iter;
 
 use Closure;
 use Iterator;
+use Traversable;
 use yuyaprgrm\enhancedphp\iter\internal\Filter;
 use yuyaprgrm\enhancedphp\iter\internal\Map;
 use yuyaprgrm\enhancedphp\iter\internal\ValueFilteredException;
@@ -120,9 +121,9 @@ final class Iter{
     /**
      * Transform an iterator into native iterator.
      *
-     * @return iterable<TKey, TValue>
+     * @return Traversable<TKey, TValue>
      */
-    public function native() : iterable{
+    public function native() : Traversable{
         foreach($this->elements as $k => $v){
             try{
                 foreach($this->processes as $proc){
@@ -141,5 +142,4 @@ final class Iter{
             yield $k => $v;
         }
     }
-
 }
