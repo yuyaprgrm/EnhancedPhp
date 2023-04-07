@@ -39,6 +39,16 @@ final class IterTest extends TestCase{
             ->native();
         $actual = iterator_to_array($actual);
         $this->assertSame($expected, $actual);
+
+        $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $expected = [0 => 2, 2 => 4, 4 => 6, 6 => 8, 8 => 10];
+
+        $actual = Iter::create($case)
+            ->filter(fn(int $v) : bool => ($v % 2 == 1))
+            ->map(fn(int $v) : int => $v+1)
+            ->native();
+        $actual = iterator_to_array($actual);
+        $this->assertSame($expected, $actual);
     }
 
     public function testAll() : void{
