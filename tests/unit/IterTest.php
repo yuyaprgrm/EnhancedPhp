@@ -13,21 +13,16 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use yuyaprgrm\enhancedphp\iter\Iter;
+use yuyaprgrm\enhancedphp\std\Iter;
 
 final class IterTest extends TestCase{
     public function testMap() : void{
         $case = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         $expected = [1, 4, 9, 16, 25, 36, 49, 64, 81, 100];
-
-        foreach(
-            Iter::create($case)
-                ->map(fn(int $v) : int => $v ** 2)
-                ->native()
-            as $k => $v
-        ){
-            $this->assertSame($expected[$k], $v);
-        }
+        $actual = Iter::create($case)
+            ->map(fn(int $v) : int => $v ** 2)
+            ->native();
+        $this->assertSame($expected, $actual);
     }
 
     public function testFilter() : void{

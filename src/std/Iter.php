@@ -12,12 +12,10 @@
 
 declare(strict_types=1);
 
-namespace yuyaprgrm\enhancedphp\iter;
+namespace yuyaprgrm\enhancedphp\std;
 
 use Closure;
 use Iterator;
-use yuyaprgrm\enhancedphp\iter\internal\Filter;
-use yuyaprgrm\enhancedphp\iter\internal\Map;
 use function array_map;
 use function array_reverse;
 use function count;
